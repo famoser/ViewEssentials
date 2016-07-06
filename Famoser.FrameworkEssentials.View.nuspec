@@ -2,14 +2,14 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>Famoser.FrameworkEssentials.View</id>
-        <version>1.0.2</version>
+        <version>1.0.3</version>
         <authors>Florian Moser</authors>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>This packages contains utilities which I use in my view projects.
 
 Currently, it contains:
 - IndeterminateProgressDisposable</description>
-        <releaseNotes>initial release</releaseNotes>
+        <releaseNotes>remvoed necessity to call start()</releaseNotes>
 		<dependencies>
 			<dependency id="Famoser.FrameworkEssentials" version="2.6.3" />
 			<dependency id="MvvmLightLibs" version="5.3.0.0" />

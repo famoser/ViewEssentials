@@ -23,17 +23,19 @@ namespace Famoser.FrameworkEssentials.View.Commands
             _booleanSetter = booleanSetter;
             _progressKey = key;
             _progressService = progressService;
+
+            Start();
         }
 
         public IndeterminateProgressDisposable(RelayCommand<T2> command, Action<bool> booleanSetter, T key, IProgressService progressService)
         {
             _genericRelayCommand = command;
-            _booleanSetter = booleanSetter;
+            _booleanSetter = booleanSetter; 
             _progressKey = key;
             _progressService = progressService;
         }
 
-        public void Start()
+        private void Start()
         {
             _progressService.StartIndeterminateProgress(_progressKey);
             _booleanSetter(true);
