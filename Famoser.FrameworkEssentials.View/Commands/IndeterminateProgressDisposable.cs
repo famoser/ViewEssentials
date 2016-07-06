@@ -33,6 +33,8 @@ namespace Famoser.FrameworkEssentials.View.Commands
             _booleanSetter = booleanSetter; 
             _progressKey = key;
             _progressService = progressService;
+
+            Start();
         }
 
         private void Start()
