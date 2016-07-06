@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>Famoser.FrameworkEssentials.View</id>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
         <authors>Florian Moser</authors>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>This packages contains utilities which I use in my view projects.
