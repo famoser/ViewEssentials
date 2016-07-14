@@ -30,7 +30,7 @@ namespace Famoser.FrameworkEssentials.View.Commands
         public IndeterminateProgressDisposable(RelayCommand<T2> command, Action<bool> booleanSetter, T key, IProgressService progressService)
         {
             _genericRelayCommand = command;
-            _booleanSetter = booleanSetter; 
+            _booleanSetter = booleanSetter;
             _progressKey = key;
             _progressService = progressService;
 
@@ -53,4 +53,5 @@ namespace Famoser.FrameworkEssentials.View.Commands
             _genericRelayCommand?.RaiseCanExecuteChanged();
         }
     }
+
 }
