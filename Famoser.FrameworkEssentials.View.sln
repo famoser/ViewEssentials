@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Famoser.FrameworkEssentials.View", "Famoser.FrameworkEssentials.View\Famoser.FrameworkEssentials.View.csproj", "{CE9A784E-6C61-456D-A6C1-63BBC4313CF2}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{993EE113-20DA-4A5A-B717-E12818A65016}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

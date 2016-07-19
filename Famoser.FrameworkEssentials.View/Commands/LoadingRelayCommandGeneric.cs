@@ -3,20 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using System.Xml.Linq;
+using Famoser.FrameworkEssentials.View.Commands.Base;
+using Famoser.FrameworkEssentials.View.Commands.Interfaces;
 using GalaSoft.MvvmLight.Helpers;
 
 namespace Famoser.FrameworkEssentials.View.Commands
 {
-    public class LoadingRelayCommand<T>
+    public class LoadingRelayCommand<T> : LoadingRelayCommandBase
     {
         private readonly WeakAction<T> _execute;
         private readonly WeakFunc<T, bool> _canExecute;
-
-        /// <summary>
-        /// Occurs when changes occur that affect whether the command should execute.
-        /// 
-        /// </summary>
-        public event EventHandler CanExecuteChanged;
 
         /// <summary>
         /// Initializes a new instance of the RelayCommand class.
@@ -33,34 +31,6 @@ namespace Famoser.FrameworkEssentials.View.Commands
         }
 
         /// <summary>
-        /// Raises the <see cref="E:GalaSoft.MvvmLight.Command.RelayCommand.CanExecuteChanged"/> event.
-        /// 
-        /// </summary>
-        public void RaiseCanExecuteChanged()
-        {
-            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
-        }
-
-        private bool _disabled;
-        /// <summary>
-        /// Disable the command now
-        /// </summary>
-        public void Disable()
-        {
-            _disabled = true;
-            RaiseCanExecuteChanged();
-        }
-        
-        /// <summary>
-        /// Enable the command if CanExecute evaluates to true
-        /// </summary>
-        public void Enable()
-        {
-            _disabled = false;
-            RaiseCanExecuteChanged();
-        }
-
-        /// <summary>
         /// Defines the method that determines whether the command can execute in its current state.
         /// 
         /// </summary>
@@ -68,9 +38,9 @@ namespace Famoser.FrameworkEssentials.View.Commands
         /// <returns>
         /// true if this command can be executed; otherwise, false.
         /// </returns>
-        public bool CanExecute(object parameter)
+        public override bool CanExecute(object parameter)
         {
-            if (_disabled)
+            if (!base.CanExecute(parameter))
                 return false;
             if (_canExecute == null)
                 return true;
@@ -84,7 +54,7 @@ namespace Famoser.FrameworkEssentials.View.Commands
         /// 
         /// </summary>
         /// <param name="parameter">This parameter will always be ignored.</param>
-        public virtual void Execute(object parameter)
+        public override void Execute(object parameter)
         {
             if (!CanExecute(parameter) || _execute == null || !_execute.IsStatic && !_execute.IsAlive)
                 return;
