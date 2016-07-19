@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Famoser.FrameworkEssentials
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{993EE113-20DA-4A5A-B717-E12818A65016}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Famoser.FrameworkEssentials.Tests", "Famoser.FrameworkEssentials.Tests\Famoser.FrameworkEssentials.Tests.csproj", "{9D889071-3FDE-4CE1-BD44-2AE3D613A20E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,8 +19,15 @@ Global
 		{CE9A784E-6C61-456D-A6C1-63BBC4313CF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE9A784E-6C61-456D-A6C1-63BBC4313CF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CE9A784E-6C61-456D-A6C1-63BBC4313CF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D889071-3FDE-4CE1-BD44-2AE3D613A20E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D889071-3FDE-4CE1-BD44-2AE3D613A20E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D889071-3FDE-4CE1-BD44-2AE3D613A20E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D889071-3FDE-4CE1-BD44-2AE3D613A20E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9D889071-3FDE-4CE1-BD44-2AE3D613A20E} = {993EE113-20DA-4A5A-B717-E12818A65016}
 	EndGlobalSection
 EndGlobal
