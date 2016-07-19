@@ -50,7 +50,7 @@ namespace Famoser.FrameworkEssentials.View.Commands.Base
         
         public ShowIndeterminateProgressDisposable GetProgressDisposable(IProgressService progressService, object progressKey, bool disableCommand = true)
         {
-            return new ShowIndeterminateProgressDisposable(this, progressService, progressKey, _disabled);
+            return new ShowIndeterminateProgressDisposable(this, progressService, progressKey, disableCommand);
         }
     }
 }
