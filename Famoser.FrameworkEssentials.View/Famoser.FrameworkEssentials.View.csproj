@@ -39,7 +39,6 @@
     <Compile Include="Commands\Interfaces\ILoadingRelayCommand.cs" />
     <Compile Include="Commands\LoadingRelayCommandGeneric.cs" />
     <Compile Include="Commands\LoadingRelayCommand.cs" />
-    <Compile Include="Commands\IndeterminateProgressDisposable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
