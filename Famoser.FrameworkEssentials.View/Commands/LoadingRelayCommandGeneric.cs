@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -40,12 +41,15 @@ namespace Famoser.FrameworkEssentials.View.Commands
         /// </returns>
         public override bool CanExecute(object parameter)
         {
-            if (!base.CanExecute(parameter))
-                return false;
             if (_canExecute == null)
                 return true;
             if (_canExecute.IsStatic || _canExecute.IsAlive)
-                return _canExecute.Execute();
+            {
+                if (parameter == null && typeof(T).GetTypeInfo().IsValueType)
+                    return _canExecute.Execute(default(T));
+                if (parameter == null || parameter is T)
+                    return _canExecute.Execute((T)parameter);
+            }
             return false;
         }
 
@@ -58,7 +62,15 @@ namespace Famoser.FrameworkEssentials.View.Commands
         {
             if (!CanExecute(parameter) || _execute == null || !_execute.IsStatic && !_execute.IsAlive)
                 return;
-            _execute.Execute();
+            if (parameter == null)
+            {
+                if (typeof(T).GetTypeInfo().IsValueType)
+                    _execute.Execute(default(T));
+                else
+                    _execute.Execute((T)parameter);
+            }
+            else
+                _execute.Execute((T)parameter);
         }
     }
 }

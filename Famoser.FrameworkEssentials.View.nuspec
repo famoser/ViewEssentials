@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>Famoser.FrameworkEssentials.View</id>
-        <version>1.2.0</version>
+        <version>1.2.2</version>
         <authors>Florian Moser</authors>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<licenseUrl>http://github.com/famoser/ViewEssentials/blob/master/LICENSE</licenseUrl>
@@ -11,7 +11,15 @@
 
 Currently, it contains:
 - LoadingRelayCommand</description>
-        <releaseNotes>removed IndeterminateProgressDisposable as it becomes obsolete with the new LoadingRelayCommand</releaseNotes>
+        <releaseNotes>1.2.0:
+removed IndeterminateProgressDisposable as it becomes obsolete with the new LoadingRelayCommand
+
+1.2.1:
+added depended commands
+
+1.2.2:
+bugfix with LoadingRelayCommandGeneric
+		</releaseNotes>
 		<dependencies>
 			<dependency id="Famoser.FrameworkEssentials" version="2.6.3" />
 			<dependency id="MvvmLightLibs" version="5.3.0.0" />

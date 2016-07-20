@@ -11,6 +11,7 @@ namespace Famoser.FrameworkEssentials.View.Commands.Base
 {
     public abstract class LoadingRelayCommandBase : ILoadingRelayCommand
     {
+        private List<ILoadingRelayCommand> _dependentCommands = new List<ILoadingRelayCommand>();
         public virtual bool CanExecute(object parameter)
         {
             return !_disabled;
@@ -47,10 +48,20 @@ namespace Famoser.FrameworkEssentials.View.Commands.Base
             _disabled = false;
             RaiseCanExecuteChanged();
         }
-        
+
+        public void AddDependentCommand(ILoadingRelayCommand command)
+        {
+            _dependentCommands.Add(command);
+        }
+
         public ShowIndeterminateProgressDisposable GetProgressDisposable(IProgressService progressService, object progressKey, bool disableCommand = true)
         {
-            return new ShowIndeterminateProgressDisposable(this, progressService, progressKey, disableCommand);
+            return new ShowIndeterminateProgressDisposable(this, _dependentCommands, progressService, progressKey, disableCommand);
+        }
+
+        public ShowIndeterminateProgressDisposable GetProgressDisposable()
+        {
+            return new ShowIndeterminateProgressDisposable(this, _dependentCommands);
         }
     }
 }

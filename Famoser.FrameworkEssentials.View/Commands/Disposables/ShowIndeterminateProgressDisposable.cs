@@ -11,13 +11,15 @@ namespace Famoser.FrameworkEssentials.View.Commands.Disposables
     public class ShowIndeterminateProgressDisposable : IDisposable
     {
         private readonly ILoadingRelayCommand _command;
+        private readonly IList<ILoadingRelayCommand> _dependentCommands;
         private readonly IProgressService _progressService;
         private readonly object _progressKey;
         private readonly bool _disableCommand;
 
-        public ShowIndeterminateProgressDisposable(ILoadingRelayCommand command, IProgressService progressService, object progressKey, bool disableCommand = true)
+        public ShowIndeterminateProgressDisposable(ILoadingRelayCommand command, IList<ILoadingRelayCommand> dependentCommands, IProgressService progressService = null, object progressKey = null, bool disableCommand = true)
         {
             _command = command;
+            _dependentCommands = dependentCommands;
             _progressService = progressService;
             _progressKey = progressKey;
             _disableCommand = disableCommand;
@@ -30,6 +32,12 @@ namespace Famoser.FrameworkEssentials.View.Commands.Disposables
             _progressService?.StartIndeterminateProgress(_progressKey);
             if (_disableCommand)
             {
+                foreach (var loadingRelayCommand in _dependentCommands)
+                {
+                    loadingRelayCommand.Disable();
+                    loadingRelayCommand.RaiseCanExecuteChanged();
+                }
+
                 _command.Disable();
                 _command.RaiseCanExecuteChanged();
             }
@@ -37,9 +45,15 @@ namespace Famoser.FrameworkEssentials.View.Commands.Disposables
 
         public void Dispose()
         {
-            _progressService.StopIndeterminateProgress(_progressKey);
+            _progressService?.StopIndeterminateProgress(_progressKey);
             if (_disableCommand)
             {
+                foreach (var loadingRelayCommand in _dependentCommands)
+                {
+                    loadingRelayCommand.Enable();
+                    loadingRelayCommand.RaiseCanExecuteChanged();
+                }
+
                 _command.Enable();
                 _command.RaiseCanExecuteChanged();
             }
