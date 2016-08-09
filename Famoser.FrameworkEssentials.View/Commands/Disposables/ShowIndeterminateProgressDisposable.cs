@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Famoser.FrameworkEssentials.Services.Interfaces;
 using Famoser.FrameworkEssentials.View.Commands.Interfaces;
 
@@ -35,11 +32,9 @@ namespace Famoser.FrameworkEssentials.View.Commands.Disposables
                 foreach (var loadingRelayCommand in _dependentCommands)
                 {
                     loadingRelayCommand.Disable();
-                    loadingRelayCommand.RaiseCanExecuteChanged();
                 }
 
                 _command.Disable();
-                _command.RaiseCanExecuteChanged();
             }
         }
 
@@ -51,11 +46,9 @@ namespace Famoser.FrameworkEssentials.View.Commands.Disposables
                 foreach (var loadingRelayCommand in _dependentCommands)
                 {
                     loadingRelayCommand.Enable();
-                    loadingRelayCommand.RaiseCanExecuteChanged();
                 }
 
                 _command.Enable();
-                _command.RaiseCanExecuteChanged();
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Famoser.FrameworkEssentials.Services;
 using Famoser.FrameworkEssentials.View.Commands;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -31,6 +32,17 @@ namespace Famoser.FrameworkEssentials.Tests
             }
             Assert.IsTrue(command.CanExecute(null));
             Assert.IsTrue(dependent.CanExecute(null));
+        }
+
+        [TestMethod]
+        public async Task TestAsyncDisposable()
+        {
+            var command = new LoadingRelayCommand(async () => { await Task.Delay(1000); }, null, true);
+            Assert.IsTrue(command.CanExecute(null));
+            command.Execute(null);
+            Assert.IsFalse(command.CanExecute(null));
+            await Task.Delay(2000);
+            Assert.IsTrue(command.CanExecute(null));
         }
     }
 }

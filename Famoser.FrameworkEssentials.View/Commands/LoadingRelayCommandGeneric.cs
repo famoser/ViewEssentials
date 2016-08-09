@@ -1,34 +1,52 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Input;
-using System.Xml.Linq;
 using Famoser.FrameworkEssentials.View.Commands.Base;
-using Famoser.FrameworkEssentials.View.Commands.Interfaces;
-using GalaSoft.MvvmLight.Helpers;
+using Famoser.FrameworkEssentials.View.Utils.Delegates;
 
 namespace Famoser.FrameworkEssentials.View.Commands
 {
     public class LoadingRelayCommand<T> : LoadingRelayCommandBase
     {
-        private readonly WeakAction<T> _execute;
-        private readonly WeakFunc<T, bool> _canExecute;
+        private readonly WeakArgumentDelegate<T> _execute;
+        private readonly WeakArgumentDelegate<T, bool> _canExecute;
 
         /// <summary>
         /// Initializes a new instance of the RelayCommand class.
         /// 
         /// </summary>
         /// <param name="execute">The execution logic.
-        ///             due to the use of WeakActions (see http://stackoverflow.com/questions/25730530/). </param><param name="canExecute">The execution status logic.</param><exception cref="T:System.ArgumentNullException">If the execute argument is null. IMPORTANT: Note that closures are not supported at the moment
+        ///             due to the use of WeakActions (see http://stackoverflow.com/questions/25730530/). </param><param name="canExecute">The execution status logic.</param>
+        /// <param name="disableWhileExecuting"></param>
+        /// <exception cref="T:System.ArgumentNullException">If the execute argument is null. IMPORTANT: Note that closures are not supported at the moment
         ///             due to the use of WeakActions (see http://stackoverflow.com/questions/25730530/). </exception>
-        public LoadingRelayCommand(Action<T> execute, Func<T, bool> canExecute = null)
+        public LoadingRelayCommand(Action<T> execute, Func<T, bool> canExecute = null, bool disableWhileExecuting = false) : this(canExecute, disableWhileExecuting)
         {
-            _execute = new WeakAction<T>(execute);
+            _execute = new WeakArgumentDelegate<T>(execute);
             if (canExecute != null)
-                _canExecute = new WeakFunc<T, bool>(canExecute);
+                _canExecute = new WeakArgumentDelegate<T, bool>(canExecute);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the RelayCommand class.
+        /// 
+        /// </summary>
+        /// <param name="execute">The execution logic.
+        ///             due to the use of WeakActions (see http://stackoverflow.com/questions/25730530/). </param><param name="canExecute">The execution status logic.</param>
+        /// <param name="disableWhileExecuting"></param>
+        /// <exception cref="T:System.ArgumentNullException">If the execute argument is null. IMPORTANT: Note that closures are not supported at the moment
+        ///             due to the use of WeakActions (see http://stackoverflow.com/questions/25730530/). </exception>
+        public LoadingRelayCommand(Func<T, Task> execute, Func<T, bool> canExecute = null, bool disableWhileExecuting = false) : this(canExecute, disableWhileExecuting)
+        {
+            _execute = new WeakArgumentDelegate<T>(execute);
+            if (canExecute != null)
+                _canExecute = new WeakArgumentDelegate<T, bool>(canExecute);
+        }
+
+        private LoadingRelayCommand(Func<T, bool> canExecute, bool disableWhileExecuting) : base(disableWhileExecuting)
+        {
+            if (canExecute != null)
+                _canExecute = new WeakArgumentDelegate<T, bool>(canExecute);
         }
 
         /// <summary>
@@ -62,15 +80,48 @@ namespace Famoser.FrameworkEssentials.View.Commands
         {
             if (!CanExecute(parameter) || _execute == null || !_execute.IsStatic && !_execute.IsAlive)
                 return;
-            if (parameter == null)
+
+            if (_disableWhileExecuting)
+                ForceDisable();
+            if (_execute.CanExecuteAsync())
             {
-                if (typeof(T).GetTypeInfo().IsValueType)
-                    _execute.Execute(default(T));
+                if (parameter == null)
+                {
+                    if (typeof(T).GetTypeInfo().IsValueType)
+                        _execute.ExecuteAsync(default(T)).ContinueWith((e, f) =>
+                        {
+                            if (_disableWhileExecuting)
+                                ForceEnable();
+                        }, null);
+                    else
+                        _execute.ExecuteAsync((T)parameter).ContinueWith((e, f) =>
+                        {
+                            if (_disableWhileExecuting)
+                                ForceEnable();
+                        }, null);
+                }
                 else
-                    _execute.Execute((T)parameter);
+                    _execute.ExecuteAsync((T)parameter).ContinueWith((e, f) =>
+                    {
+                        if (_disableWhileExecuting)
+                            ForceEnable();
+                    }, null);
             }
             else
-                _execute.Execute((T)parameter);
+            {
+                if (parameter == null)
+                {
+                    if (typeof(T).GetTypeInfo().IsValueType)
+                        _execute.Execute(default(T));
+                    else
+                        _execute.Execute((T)parameter);
+                }
+                else
+                    _execute.Execute((T)parameter);
+
+                if (_disableWhileExecuting)
+                    ForceEnable();
+            }
         }
     }
 }
