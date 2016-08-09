@@ -54,6 +54,9 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="LanguageTests\DelegateTests.cs" />
+    <Compile Include="LanguageTests\TestClasses\DelegateHelper.cs" />
+    <Compile Include="LanguageTests\TestClasses\SomeModel.cs" />
     <Compile Include="TestLoadingRelayCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
