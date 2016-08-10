@@ -15,16 +15,13 @@ namespace Famoser.FrameworkEssentials.View.Utils.Delegates
         /// Initializes a new instance of the <see cref="T:GalaSoft.MvvmLight.Helpers.WeakFunc" /> class.
         /// </summary>
         /// <param name="func">The func that will be associated to this instance.</param>
-        public WeakArgumentDelegate(Func<TArgument, Task<TResult>> func) : this(func?.Target, func)
-        {
-        }
+        public WeakArgumentDelegate(Func<TArgument, Task<TResult>> func) : this(func?.Target, func) { }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="T:GalaSoft.MvvmLight.Helpers.WeakFunc" /> class.
         /// </summary>
         /// <param name="func">The func that will be associated to this instance.</param>
-        public WeakArgumentDelegate(Func<TArgument, TResult> func) : this(func?.Target, func)
-        {
-        }
+        public WeakArgumentDelegate(Func<TArgument, TResult> func) : this(func?.Target, func) { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:GalaSoft.MvvmLight.Helpers.WeakFunc" /> class.
@@ -50,27 +47,48 @@ namespace Famoser.FrameworkEssentials.View.Utils.Delegates
 
         public bool CanExecuteAsync()
         {
-            return _staticDelegate is Func<TArgument, Task>; //Func<Task<T>> inherits from Func<Task>
+            return _staticDelegate is Func<TArgument, Task> || Method?.ReturnType == typeof(Task); //Func<Task<T>> inherits from Func<Task>
         }
 
         /// <summary>
         /// Executes the func. This only happens if the func's owner
         /// is still alive.
         /// </summary>
-        public async Task ExecuteAsync(TArgument argument)
+        public async Task<TResult> ExecuteAsync(TArgument argument)
         {
-            if (_staticDelegate is Func<TArgument, Task>)
+            if (CanExecuteAsync())
             {
-                var func = (Func<TArgument, Task>)_staticDelegate;
-                await func(argument);
+                if (_staticDelegate != null)
+                {
+                    if (_staticDelegate is Func<TArgument, Task<TResult>>)
+                    {
+                        var func = (Func<TArgument, Task<TResult>>)_staticDelegate;
+                        return await func(argument);
+                    }
+                    if (_staticDelegate is Func<TArgument, Task>)
+                    {
+                        var func = (Func<TArgument, Task>)_staticDelegate;
+                        await func(argument);
+                    }
+                }
+                else
+                {
+                    object funcTarget = DelegateTarget;
+                    if (!IsAlive || Method == null || FuncReference == null || funcTarget == null)
+                        return default(TResult);
+                    if (Method?.ReturnType == typeof(Task<TResult>))
+                        return await (Task<TResult>)Method.Invoke(funcTarget, new object[] { argument });
+                    await (Task)Method.Invoke(funcTarget, new object[] { argument });
+                }
             }
+            return default(TResult);
         }
 
         /// <summary>
         /// Executes the delegate. This only happens if the func's owner
         /// is still alive.
         /// </summary>
-        public TResult Execute(TArgument argument)
+        public object Execute(TArgument argument)
         {
             if (_staticDelegate != null)
             {
@@ -79,13 +97,19 @@ namespace Famoser.FrameworkEssentials.View.Utils.Delegates
                     var ac = (Func<TArgument, TResult>)_staticDelegate;
                     return ac.Invoke(argument);
                 }
+                if (_staticDelegate is Func<TArgument, Task<TResult>>)
+                {
+                    var ac = (Func<TArgument, Task<TResult>>)_staticDelegate;
+                    return ac.Invoke(argument);
+                }
             }
             else
             {
                 object funcTarget = DelegateTarget;
                 if (!IsAlive || Method == null || FuncReference == null || funcTarget == null)
-                    return default (TResult);
-                return (TResult)Method.Invoke(funcTarget, new object[] { argument });
+                    return default(TResult);
+                
+                return Method.Invoke(funcTarget, new object[] { argument });
             }
             return default(TResult);
         }

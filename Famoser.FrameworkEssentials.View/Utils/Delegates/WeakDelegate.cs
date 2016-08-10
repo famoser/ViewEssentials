@@ -60,10 +60,23 @@ namespace Famoser.FrameworkEssentials.View.Utils.Delegates
         /// </summary>
         public async Task ExecuteAsync()
         {
-            if (_staticDelegate is Func<Task>)
+            if (CanExecuteAsync())
             {
-                var func = (Func<Task>)_staticDelegate;
-                await func();
+                if (_staticDelegate != null)
+                {
+                    if (_staticDelegate is Func<Task>)
+                    {
+                        var func = (Func<Task>) _staticDelegate;
+                        await func();
+                    }
+                }
+                else
+                {
+                    object funcTarget = DelegateTarget;
+                    if (!IsAlive || Method == null || FuncReference == null || funcTarget == null)
+                        return;
+                    await (Task)Method.Invoke(funcTarget, null);
+                }
             }
         }
 

@@ -55,15 +55,28 @@ namespace Famoser.FrameworkEssentials.View.Utils.Delegates
         }
 
         /// <summary>
-        /// Executes the func. This only happens if the func's owner
+        /// Executes the delegate async. This only happens if the func's owner
         /// is still alive.
         /// </summary>
         public async Task ExecuteAsync(TArgument argument)
         {
-            if (_staticDelegate is Func<TArgument, Task>)
+            if (CanExecuteAsync())
             {
-                var func = (Func<TArgument, Task>)_staticDelegate;
-                await func(argument);
+                if (_staticDelegate != null)
+                {
+                    if (_staticDelegate is Func<TArgument, Task>)
+                    {
+                        var func = (Func<TArgument, Task>) _staticDelegate;
+                        await func(argument);
+                    }
+                }
+                else
+                {
+                    object funcTarget = DelegateTarget;
+                    if (!IsAlive || Method == null || FuncReference == null || funcTarget == null)
+                        return;
+                    await (Task) Method.Invoke(funcTarget, new object[] {argument});
+                }
             }
         }
 
@@ -91,7 +104,7 @@ namespace Famoser.FrameworkEssentials.View.Utils.Delegates
                 object funcTarget = DelegateTarget;
                 if (!IsAlive || Method == null || FuncReference == null || funcTarget == null)
                     return;
-                Method.Invoke(funcTarget, null);
+                Method.Invoke(funcTarget, new object[] { argument });
             }
         }
     }

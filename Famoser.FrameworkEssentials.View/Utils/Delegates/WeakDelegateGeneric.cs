@@ -51,7 +51,7 @@ namespace Famoser.FrameworkEssentials.View.Utils.Delegates
 
         public bool CanExecuteAsync()
         {
-            return _staticDelegate is Func<Task<TResult>>; //Func<Task<T>> inherits from Func<Task>
+            return _staticDelegate is Func<Task<TResult>> || Method?.ReturnType == typeof(Task);
         }
 
         /// <summary>
@@ -60,10 +60,23 @@ namespace Famoser.FrameworkEssentials.View.Utils.Delegates
         /// </summary>
         public async Task<TResult> ExecuteAsync()
         {
-            if (_staticDelegate is Func<Task<TResult>>)
+            if (CanExecuteAsync())
             {
-                var func = (Func<Task<TResult>>)_staticDelegate;
-                return await func();
+                if (_staticDelegate != null)
+                {
+                    if (_staticDelegate is Func<Task<TResult>>)
+                    {
+                        var func = (Func<Task<TResult>>)_staticDelegate;
+                        return await func();
+                    }
+                }
+                else
+                {
+                    object funcTarget = DelegateTarget;
+                    if (!IsAlive || Method == null || FuncReference == null || funcTarget == null)
+                        return default(TResult);
+                    return await (Task<TResult>)Method.Invoke(funcTarget, null);
+                }
             }
             return default(TResult);
         }
@@ -79,6 +92,11 @@ namespace Famoser.FrameworkEssentials.View.Utils.Delegates
                 if (_staticDelegate is Func<TResult>)
                 {
                     var ac = (Func<TResult>)_staticDelegate;
+                    return ac.Invoke();
+                }
+                if (_staticDelegate is Func<Task<TResult>>)
+                {
+                    var ac = (Func<Task<TResult>>)_staticDelegate;
                     return ac.Invoke();
                 }
             }

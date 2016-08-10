@@ -9,30 +9,25 @@ namespace Famoser.FrameworkEssentials.View.Commands
     {
         private readonly WeakDelegate _execute;
         private readonly WeakDelegate<bool> _canExecute;
+        
 
         /// <summary>
-        /// Initializes a new instance of the RelayCommand class.
-        /// 
+        /// Initialize the command
         /// </summary>
-        /// <param name="execute">The execution logic.
-        ///             due to the use of WeakActions (see http://stackoverflow.com/questions/25730530/). </param><param name="canExecute">The execution status logic.</param>
-        /// <param name="disableWhileExecuting"></param>
-        /// <exception cref="T:System.ArgumentNullException">If the execute argument is null. IMPORTANT: Note that closures are not supported at the moment
-        ///             due to the use of WeakActions (see http://stackoverflow.com/questions/25730530/). </exception>
+        /// <param name="execute">The Action to be executed</param>
+        /// <param name="canExecute">A Func to determine if the command can be executed</param>
+        /// <param name="disableWhileExecuting">true: CanExecute returns false while the command is excuting. Works with Async methods too if you return Task</param>
         public LoadingRelayCommand(Action execute, Func<bool> canExecute = null, bool disableWhileExecuting = false) : this(canExecute, disableWhileExecuting)
         {
             _execute = new WeakDelegate(execute);
         }
 
         /// <summary>
-        /// Initializes a new instance of the RelayCommand class.
-        /// 
+        /// Initialize the command
         /// </summary>
-        /// <param name="execute">The execution logic.
-        ///             due to the use of WeakActions (see http://stackoverflow.com/questions/25730530/). </param><param name="canExecute">The execution status logic.</param>
-        /// <param name="disableWhileExecuting"></param>
-        /// <exception cref="T:System.ArgumentNullException">If the execute argument is null. IMPORTANT: Note that closures are not supported at the moment
-        ///             due to the use of WeakActions (see http://stackoverflow.com/questions/25730530/). </exception>
+        /// <param name="execute">The Func to be executed</param>
+        /// <param name="canExecute">A Func to determine if the command can be executed</param>
+        /// <param name="disableWhileExecuting">true: CanExecute returns false while the command is excuting. Works with Async methods too if you return Task</param>
         public LoadingRelayCommand(Func<Task> execute, Func<bool> canExecute = null, bool disableWhileExecuting = false) : this(canExecute, disableWhileExecuting)
         {
             _execute = new WeakDelegate(execute);
@@ -46,7 +41,6 @@ namespace Famoser.FrameworkEssentials.View.Commands
 
         /// <summary>
         /// Defines the method that determines whether the command can execute in its current state.
-        /// 
         /// </summary>
         /// <param name="parameter">This parameter will always be ignored.</param>
         /// <returns>
@@ -65,9 +59,7 @@ namespace Famoser.FrameworkEssentials.View.Commands
 
         /// <summary>
         /// Defines the method to be called when the command is invoked.
-        /// 
         /// </summary>
-        /// <param name="parameter">This parameter will always be ignored.</param>
         public override void Execute(object parameter)
         {
             if (!CanExecute(parameter) || _execute == null || !_execute.IsStatic && !_execute.IsAlive)
